@@ -139,6 +139,8 @@ export class Auth0Client {
   };
 
   constructor(options: Auth0ClientOptions) {
+    console.log('options', options);
+
     this.options = {
       ...this.defaultOptions,
       ...options,
@@ -265,7 +267,8 @@ export class Auth0Client {
       organization,
       leeway: this.options.leeway,
       max_age: parseNumber(this.options.authorizationParams.max_age),
-      now
+      now,
+      isFDSFlowEnabled: this.options.authorizationParams?.isFDSFlowEnabled
     });
   }
 
@@ -1108,6 +1111,7 @@ export class Auth0Client {
         auth0Client: this.options.auth0Client,
         useFormData: this.options.useFormData,
         timeout: this.httpTimeoutMs,
+        isFDSFlowEnabled: this.options.authorizationParams?.isFDSFlowEnabled,
         ...options
       },
       this.worker

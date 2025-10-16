@@ -11,6 +11,7 @@ export async function oauthToken(
     scope,
     auth0Client,
     useFormData,
+    isFDSFlowEnabled,
     ...options
   }: TokenEndpointOptions,
   worker?: Worker
@@ -19,8 +20,15 @@ export async function oauthToken(
     ? createQueryParams(options)
     : JSON.stringify(options);
 
+  console.log('baseurl>>', baseUrl);
+  console.log('options api.ts>>', options);
+
+  const tokenEndpoint = isFDSFlowEnabled
+    ? `${baseUrl}/token`
+    : `${baseUrl}/oauth/token`;
+
   return await getJSON<TokenEndpointResponse>(
-    `${baseUrl}/oauth/token`,
+    tokenEndpoint,
     timeout,
     audience || 'default',
     scope,

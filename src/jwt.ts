@@ -73,10 +73,14 @@ export const verify = (options: JWTVerifyOptions) => {
     );
   }
 
-  if (decoded.claims.iss !== options.iss) {
-    throw new Error(
-      `Issuer (iss) claim mismatch in the ID token; expected "${options.iss}", found "${decoded.claims.iss}"`
-    );
+  if (!options.isFDSFlowEnabled) {
+    if (decoded.claims.iss !== options.iss) {
+      console.log('Inside commented block1');
+
+      throw new Error(
+        `Issuer (iss) claim mismatch in the ID token; expected "${options.iss}", found "${decoded.claims.iss}"`
+      );
+    }
   }
 
   if (!decoded.user.sub) {
@@ -193,30 +197,35 @@ export const verify = (options: JWTVerifyOptions) => {
     }
   }
 
-  if (options.organization) {
-    const org = options.organization.trim();
-    if (org.startsWith('org_')) {
-      const orgId = org;
-      if (!decoded.claims.org_id) {
-        throw new Error(
-          'Organization ID (org_id) claim must be a string present in the ID token'
-        );
-      } else if (orgId !== decoded.claims.org_id) {
-        throw new Error(
-          `Organization ID (org_id) claim mismatch in the ID token; expected "${orgId}", found "${decoded.claims.org_id}"`
-        );
-      }
-    } else {
-      const orgName = org.toLowerCase();
-      // TODO should we verify if there is an `org_id` claim?
-      if (!decoded.claims.org_name) {
-        throw new Error(
-          'Organization Name (org_name) claim must be a string present in the ID token'
-        );
-      } else if (orgName !== decoded.claims.org_name) {
-        throw new Error(
-          `Organization Name (org_name) claim mismatch in the ID token; expected "${orgName}", found "${decoded.claims.org_name}"`
-        );
+  console.log('options jwt.ts>>', options);
+
+  // This should be flag driven
+  if (!options.isFDSFlowEnabled) {
+    if (options.organization) {
+      const org = options.organization.trim();
+      if (org.startsWith('org_')) {
+        const orgId = org;
+        if (!decoded.claims.org_id) {
+          throw new Error(
+            'Organization ID (org_id) claim must be a string present in the ID token'
+          );
+        } else if (orgId !== decoded.claims.org_id) {
+          throw new Error(
+            `Organization ID (org_id) claim mismatch in the ID token; expected "${orgId}", found "${decoded.claims.org_id}"`
+          );
+        }
+      } else {
+        const orgName = org.toLowerCase();
+        // TODO should we verify if there is an `org_id` claim?
+        if (!decoded.claims.org_name) {
+          throw new Error(
+            'Organization Name (org_name) claim must be a string present in the ID token'
+          );
+        } else if (orgName !== decoded.claims.org_name) {
+          throw new Error(
+            `Organization Name (org_name) claim mismatch in the ID token; expected "${orgName}", found "${decoded.claims.org_name}"`
+          );
+        }
       }
     }
   }
