@@ -139,8 +139,6 @@ export class Auth0Client {
   };
 
   constructor(options: Auth0ClientOptions) {
-    console.log('options', options);
-
     this.options = {
       ...this.defaultOptions,
       ...options,

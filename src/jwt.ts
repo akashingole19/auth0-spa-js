@@ -73,14 +73,10 @@ export const verify = (options: JWTVerifyOptions) => {
     );
   }
 
-  console.log('decoded.claims.iss', decoded.claims.iss);
-  console.log('options.iss', options.iss);
-  
-  
   if (options.isFDSFlowEnabled) {
     if (!decoded.claims.iss.startsWith(options.iss)) {
       throw new Error(
-      `Issuer (iss) claim mismatch in the ID token; expected "${options.iss}", found "${decoded.claims.iss}"`
+        `Issuer (iss) claim mismatch in the ID token; expected "${options.iss}", found "${decoded.claims.iss}"`
       );
     }
   } else {
@@ -205,11 +201,6 @@ export const verify = (options: JWTVerifyOptions) => {
     }
   }
 
-  console.log('options jwt.ts>>', options);
-  console.log('options.organization', options.organization);
-  console.log('decoded>>', decoded);
-  
-  
   if (options.organization) {
     const org = options.organization.trim();
     if (org.startsWith('org_')) {

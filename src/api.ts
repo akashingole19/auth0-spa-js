@@ -20,9 +20,6 @@ export async function oauthToken(
     ? createQueryParams(options)
     : JSON.stringify(options);
 
-  console.log('baseurl>>', baseUrl);
-  console.log('options api.ts>>', options);
-
   const tokenEndpoint = isFDSFlowEnabled
     ? `${baseUrl}/token`
     : `${baseUrl}/oauth/token`;
