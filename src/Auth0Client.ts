@@ -13,7 +13,8 @@ import {
   openPopup,
   getDomain,
   getTokenIssuer,
-  parseNumber
+  parseNumber,
+  encodeFdsUrlSafe
 } from './utils';
 
 import { oauthToken } from './api';
@@ -296,7 +297,10 @@ export class Auth0Client {
     state: string;
     url: string;
   }> {
-    const state = encode(createRandomString());
+    const state = authorizationParams?.isFDSFlowEnabled
+      ? encodeFdsUrlSafe(createRandomString())
+      : encode(createRandomString());
+
     const nonce = encode(createRandomString());
     const code_verifier = createRandomString();
     const code_challengeBuffer = await sha256(code_verifier);
@@ -583,7 +587,11 @@ export class Auth0Client {
     }
 
     try {
-      await this.getTokenSilently(options);
+      if (options?.authorizationParams?.isFDSFlowEnabled) {
+        await this.loginWithRedirect(options);
+      } else {
+        await this.getTokenSilently(options);
+      }
     } catch (_) {}
   }
 

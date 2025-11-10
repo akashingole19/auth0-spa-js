@@ -155,6 +155,23 @@ export const createRandomString = () => {
 export const encode = (value: string) => btoa(value);
 export const decode = (value: string) => atob(value);
 
+/**
+ * Encodes a string into a URL-safe Base64 format.
+ * This function first performs standard Base64 encoding and then
+ * replaces characters that are problematic in URLs/filenames ('+' and '/')
+ * with URL-safe alternatives ('-' and '_').
+ *
+ * @param value The string to encode.
+ * @returns The URL-safe Base64 encoded string, containing only
+ *          alphanumeric characters, hyphens ('-'), and underscores ('_').
+ */
+export const encodeFdsUrlSafe = (value: string): string => {
+  let encoded = btoa(value);
+  encoded = encoded.replace(/\+/g, '-');
+  encoded = encoded.replace(/\//g, '_');
+  return encoded;
+};
+
 const stripUndefined = (params: any) => {
   return Object.keys(params)
     .filter(k => typeof params[k] !== 'undefined')
