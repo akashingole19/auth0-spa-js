@@ -814,7 +814,12 @@ export class Auth0Client {
       delete options.clientId;
     }
 
-    const { federated, ...logoutOptions } = options.logoutParams || {};
+    const { federated, fdsLogoutUrl, ...logoutOptions } =
+      options.logoutParams || {};
+    if (this.options.authorizationParams?.isFDSFlowEnabled && fdsLogoutUrl) {
+      return fdsLogoutUrl;
+    }
+
     const federatedQuery = federated ? `&federated` : '';
     const url = this._url(
       `/v2/logout?${createQueryParams({
@@ -822,6 +827,7 @@ export class Auth0Client {
         ...logoutOptions
       })}`
     );
+    console.log('_buildLogoutUrl>>', url, federatedQuery);
 
     return url + federatedQuery;
   }
