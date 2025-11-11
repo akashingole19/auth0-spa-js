@@ -827,7 +827,6 @@ export class Auth0Client {
         ...logoutOptions
       })}`
     );
-    console.log('_buildLogoutUrl>>', url, federatedQuery);
 
     return url + federatedQuery;
   }
