@@ -24,6 +24,20 @@ export async function oauthToken(
     ? `${baseUrl}/token`
     : `${baseUrl}/oauth/token`;
 
+  const requestHeaders: HeadersInit = {
+    'Content-Type': useFormData
+      ? 'application/x-www-form-urlencoded'
+      : 'application/json'
+  };
+
+  // Conditionally add the 'Auth0-Client' header based on the 'isFDSFlowEnabled' flag.
+  // If isFDSFlowEnabled is true, this header will be omitted.
+  if (!isFDSFlowEnabled) {
+    requestHeaders['Auth0-Client'] = btoa(
+      JSON.stringify(auth0Client || DEFAULT_AUTH0_CLIENT)
+    );
+  }
+
   return await getJSON<TokenEndpointResponse>(
     tokenEndpoint,
     timeout,
@@ -32,14 +46,7 @@ export async function oauthToken(
     {
       method: 'POST',
       body,
-      headers: {
-        'Content-Type': useFormData
-          ? 'application/x-www-form-urlencoded'
-          : 'application/json',
-        'Auth0-Client': btoa(
-          JSON.stringify(auth0Client || DEFAULT_AUTH0_CLIENT)
-        )
-      }
+      headers: requestHeaders
     },
     worker,
     useFormData
