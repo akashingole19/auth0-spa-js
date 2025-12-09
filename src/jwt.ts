@@ -60,6 +60,15 @@ export const decode = (token: string) => {
   };
 };
 
+// options.iss will include a tenant/loginHint prefix in the hostname for FDS case (e.g. "<loginHint>-<tenant>.domain").
+// Remove that leading "<loginHint>-" before comparing to the ID token `iss` claim.
+const normalizeIssuer = (iss: string, tenantId: string) => {
+  const url = new URL(iss);
+  const tenantIdPrefix = `${tenantId}-`;
+  url.hostname = url.hostname.substring(tenantIdPrefix.length);
+  return url.toString();
+};
+
 export const verify = (options: JWTVerifyOptions) => {
   if (!options.id_token) {
     throw new Error('ID token is required but missing');
@@ -74,7 +83,8 @@ export const verify = (options: JWTVerifyOptions) => {
   }
 
   if (options.isFDSFlowEnabled) {
-    if (!decoded.claims.iss.startsWith(options.iss)) {
+    const normalizedIss = normalizeIssuer(options.iss, options.loginHint!);
+    if (!decoded.claims.iss.startsWith(normalizedIss)) {
       throw new Error(
         `Issuer (iss) claim mismatch in the ID token; expected "${options.iss}", found "${decoded.claims.iss}"`
       );

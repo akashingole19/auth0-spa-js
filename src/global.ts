@@ -567,6 +567,7 @@ export interface JWTVerifyOptions {
   organization?: string;
   now?: number;
   isFDSFlowEnabled?: boolean;
+  loginHint?: string;
 }
 
 export interface IdToken {

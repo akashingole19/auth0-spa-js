@@ -240,15 +240,20 @@ export class Auth0Client {
     }
   }
 
-  private _url(path: string) {
+  private _url(path: string, includeAuth0Client: boolean = true) {
     const auth0Client = encodeURIComponent(
       btoa(JSON.stringify(this.options.auth0Client || DEFAULT_AUTH0_CLIENT))
     );
-    return `${this.domainUrl}${path}&auth0Client=${auth0Client}`;
+    return `${this.domainUrl}${path}${
+      includeAuth0Client ? `&auth0Client=${auth0Client}` : ''
+    }`;
   }
 
   private _authorizeUrl(authorizeOptions: AuthorizeOptions) {
-    return this._url(`/authorize?${createQueryParams(authorizeOptions)}`);
+    return this._url(
+      `/authorize?${createQueryParams(authorizeOptions)}`,
+      !authorizeOptions.isFDSFlowEnabled
+    );
   }
 
   private async _verifyIdToken(
@@ -267,7 +272,8 @@ export class Auth0Client {
       leeway: this.options.leeway,
       max_age: parseNumber(this.options.authorizationParams.max_age),
       now,
-      isFDSFlowEnabled: this.options.authorizationParams?.isFDSFlowEnabled
+      isFDSFlowEnabled: this.options.authorizationParams?.isFDSFlowEnabled,
+      loginHint: this.options.authorizationParams?.login_hint
     });
   }
 
