@@ -202,8 +202,9 @@ export class Auth0Client {
     // 3. Add `offline_access` if `useRefreshTokens` is enabled
     this.scope = getUniqueScopes(
       'openid',
-      this.options.authorizationParams.scope,
-      this.options.useRefreshTokens ? 'offline_access' : ''
+      this.options.authorizationParams.scope
+      // this.options.useRefreshTokens ? 'offline_access' : ''
+      // Commented out as FDS does not support `offline_access` scope and in Auth0 we use `_getTokenFromIframe` and not `useRefreshTokens`
     );
 
     this.transactionManager = new TransactionManager(
