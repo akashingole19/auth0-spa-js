@@ -594,7 +594,10 @@ export class Auth0Client {
     }
 
     try {
-      if (options?.authorizationParams?.isFDSFlowEnabled) {
+      if (
+        options?.authorizationParams?.isFDSFlowEnabled &&
+        !options?.isGuestUser
+      ) {
         await this.loginWithRedirect(options);
       } else {
         await this.getTokenSilently(options);

@@ -411,6 +411,7 @@ export interface GetTokenSilentlyOptions {
    * The default is `false`.
    */
   detailedResponse?: boolean;
+  isGuestUser?: boolean;
 }
 
 export interface GetTokenWithPopupOptions extends PopupLoginOptions {
