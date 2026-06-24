@@ -308,7 +308,9 @@ export class Auth0Client {
       ? encodeFdsUrlSafe(createRandomString())
       : encode(createRandomString());
 
-    const nonce = encode(createRandomString());
+    const nonce = authorizationParams?.isFDSFlowEnabled
+      ? encodeFdsUrlSafe(createRandomString())
+      : encode(createRandomString());
     const code_verifier = createRandomString();
     const code_challengeBuffer = await sha256(code_verifier);
     const code_challenge = bufferToBase64UrlEncoded(code_challengeBuffer);
